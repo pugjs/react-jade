@@ -1,0 +1,31 @@
+{
+  "name": "react-jade",
+  "version": "0.0.0",
+  "description": "Compile Jade to React JavaScript",
+  "keywords": [],
+  "dependencies": {
+    "resolve": "~0.7.0",
+    "uglify-js": "~2.4.13",
+    "jade": "~1.3.1",
+    "envify": "~1.2.1",
+    "react": "~0.10.0",
+    "static-module": "0.0.7",
+    "constantinople": "~2.0.0",
+    "ent": "~2.0.0"
+  },
+  "devDependencies": {
+    "gethub": "~1.0.2",
+    "testit": "~1.2.0",
+    "rimraf": "~2.2.8",
+    "marked": "~0.3.2"
+  },
+  "scripts": {
+    "test": "node test/download-jade-tests.js && node test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ForbesLindesay/react-jade.git"
+  },
+  "author": "ForbesLindesay",
+  "license": "MIT"
+}
