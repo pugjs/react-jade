@@ -17,7 +17,8 @@
     "gethub": "~1.0.2",
     "testit": "~1.2.0",
     "rimraf": "~2.2.8",
-    "marked": "~0.3.2"
+    "marked": "~0.3.2",
+    "htmlparser2": "~3.7.1"
   },
   "scripts": {
     "test": "node test/download-jade-tests.js && node test"
