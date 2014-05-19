@@ -126,7 +126,7 @@ function parseFile(filename, options) {
     return '  var ' + g + ' = ' + JSON.stringify(g) + ' in locals ? locals.' + g + ' : jade_globals_' + g + ';';
   }).join('\n'));
   return globals.map(function (g) {
-    return 'var jade_globals_' + g + ' = typeof ' + g + ' === "undefined" ? undefined : ' + g + ';\N';
+    return 'var jade_globals_' + g + ' = typeof ' + g + ' === "undefined" ? undefined : ' + g + ';\n';
   }).join('') + js.replace(/^exports *= */, 'return ');
 }
 
