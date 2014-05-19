@@ -63,15 +63,13 @@ function parseFile(filename, options) {
     jade.rethrow(err, parser.filename, parser.lexer.lineno, parser.input);
   }
   var compiler = new Compiler(tokens);
-  var js = 'exports = function () {' +
-    'var jade = {};' +
-    'jade.joinClasses = function joinClasses(val) {' +
-    'function nulls(val) { return val != null && val !== ""; }' +
-    'return Array.isArray(val) ? val.map(joinClasses).filter(nulls).join(" ") : val;' +
+  var js = 'exports = function (locals) {' +
+    'function jade_join_classes(val) {' +
+    'return Array.isArray(val) ? val.map(jade_join_classes).filter(function (val) { return val != null && val !== ""; }).join(" ") : val;' +
     '};' +
+    'jade_variables(locals);' +
     compiler.compile() +
     '}';
-
   Function('', js);
   var ast = uglify.parse(js, {filename: filename});
 
@@ -82,7 +80,7 @@ function parseFile(filename, options) {
     dead_code: true,    // discard unreachable code
     unsafe: true,       // some unsafe optimizations (see below)
     conditionals: true, // optimize if-s and conditional expressions
-    comparisons: true,  // optimize comparisons
+    comparisons: true,  // optimize comparisonsx
     evaluate: true,     // evaluate constant expressions
     booleans: true,     // optimize boolean expressions
     loops: true,        // optimize loops
@@ -99,24 +97,41 @@ function parseFile(filename, options) {
 
   ast = ast.transform(new JavaScriptCompressor());
 
+  ast.figure_out_scope();
+  var globals = ast.globals.map(function (node, name) {
+    return name;
+  }).filter(function (name) {
+    return name !== 'jade_variables' && name !== 'exports' && name !== 'Array' && name !== 'React';
+  });
+
   js = ast.print_to_string({
     beautify: true,
     comments: true,
     indent_level: 2
   });
   assert(/^exports *= */.test(js));
-  return js.replace(/^exports *= */, '');
+  assert(/jade_variables\(locals\)/.test(js));
+
+  if (globals.length === 0) {
+    return js.replace(/^exports *= */, 'var result = ').replace(/\n? *jade_variables\(locals\);?/, '').replace(/;?$/, '();') + '\nreturn function () { return result; };';
+  }
+  js = js.replace(/\n? *jade_variables\(locals\);?/, globals.map(function (g) {
+    return '  var ' + g + ' = ' + JSON.stringify(g) + ' in locals ? locals.' + g + ' : jade_globals_' + g + ';';
+  }).join('\n'));
+  return globals.map(function (g) {
+    return 'var jade_globals_' + g + ' = typeof ' + g + ' === "undefined" ? undefined : ' + g + ';\N';
+  }).join('') + js.replace(/^exports *= */, 'return ');
 }
 
 exports.compileFile = compileFile;
 function compileFile(filename, options) {
-  return Function('React', 'return ' + parseFile(filename, options))(React);
+  return Function('React', parseFile(filename, options))(React);
 }
 
 exports.compileFileClient = compileFileClient;
 function compileFileClient(filename, options) {
   var react = options.outputFile ? path.relative(path.dirname(options.outputFile), reactRuntimePath) : reactRuntimePath;
-  return '(function (jade, React) {\n  return ' +
+  return '(function (React) {\n  ' +
     parseFile(filename, options).split('\n').join('\n  ') +
     '\n}(typeof React !== "undefined" ? React : require("' + react.replace(/\\/g, '/') + '")))';
 }
