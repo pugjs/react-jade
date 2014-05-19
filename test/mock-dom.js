@@ -17,11 +17,6 @@ function mock() {
         attribs['class'] = attribs.className;
         delete attribs.className;
       }
-      if ('value' in attribs) throw new Error('Cannot have an attribute named "value", perhaps you meant "defaultValue"');
-      if ('defaultValue' in attribs) {
-        attribs['value'] = attribs.defaultValue;
-        delete attribs.defaultValue;
-      }
       if (attribs['class'] === '') delete attribs['class'];
       Object.keys(attribs).forEach(function (key) {
         if (attribs[key] === true) {
