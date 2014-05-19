@@ -1,6 +1,6 @@
 {
   "name": "react-jade",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Compile Jade to React JavaScript",
   "keywords": [],
   "dependencies": {
