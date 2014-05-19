@@ -27,8 +27,14 @@ function browserifySupport(options, extra) {
     };
     return staticModule({
     'react-jade': {
-        compileFile: function (filename, options) {
-          return compileFileClient(filename, options);
+        compileFile: function (jadeFile, localOptions) {
+          localOptions = localOptions || {};
+          for (var key in options) {
+            if ((key in options) && !(key in localOptions))
+            localOptions[key] = options[key];
+          }
+          localOptions.outputFile = filename;
+          return compileFileClient(jadeFile, localOptions);
         }
       }
     }, {
@@ -45,6 +51,7 @@ function browserifySupport(options, extra) {
     options = extra || {};
     return transform(file);
   } else {
+    options = options || {};
     return transform;
   }
 }
@@ -130,6 +137,7 @@ function compileFile(filename, options) {
 
 exports.compileFileClient = compileFileClient;
 function compileFileClient(filename, options) {
+  options = options || {};
   var react = options.outputFile ? path.relative(path.dirname(options.outputFile), reactRuntimePath) : reactRuntimePath;
   return '(function (React) {\n  ' +
     parseFile(filename, options).split('\n').join('\n  ') +
