@@ -77,7 +77,6 @@ function parseFile(filename, options) {
     'jade_variables(locals);' +
     compiler.compile() +
     '}';
-  Function('', js);
   var ast = uglify.parse(js, {filename: filename});
 
   ast.figure_out_scope();
