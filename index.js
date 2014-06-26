@@ -74,10 +74,16 @@ function parseFile(filename, options) {
     'function jade_join_classes(val) {' +
     'return Array.isArray(val) ? val.map(jade_join_classes).filter(function (val) { return val != null && val !== ""; }).join(" ") : val;' +
     '};' +
+    'var jade_interp;' +
     'jade_variables(locals);' +
     compiler.compile() +
     '}';
-  Function('', js);
+  try {
+    Function('', js);
+  } catch (ex) {
+    console.log(js);
+    throw ex;
+  }
   var ast = uglify.parse(js, {filename: filename});
 
   ast.figure_out_scope();
@@ -98,7 +104,7 @@ function parseFile(filename, options) {
     join_vars: false,   // join var declarations
     cascade: true,      // try to cascade `right` into `left` in sequences
     side_effects: true, // drop side-effect-free statements
-    warnings: true,     // warn about potentially dangerous optimizations/code
+    warnings: false,     // warn about potentially dangerous optimizations/code
     global_defs: {}     // global definitions));
   }));
 

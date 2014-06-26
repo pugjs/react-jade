@@ -51,6 +51,21 @@ Then on your html page:
 </script>
 ```
 
+### Server Side
+
+You can also use react-jade to render templates on the server side via `React.renderComponentToString`.  This is especially useful for building isomorphic applications (i.e. applications that run the same on the server side and client side).
+
+```js
+var fs = require('fs');
+var React = require('react');
+var jade = require('jade-react');
+
+var template = jade.compileFile(__dirname + '/template.jade');
+
+var html = React.renderComponentToString(template({local: 'values'}));
+fs.writeFileSync(__dirname + '/template.html', html);
+```
+
 ## API
 
 ```js
@@ -84,7 +99,57 @@ Compile a jade file into a function that takes locals and returns a React DOM no
 
 Compile a jade file into the source code for a function that takes locals and returns a React DOM node.  The result requires either a global 'React' variable, or the ability to require 'React' as a CommonJS module.
 
-## Unsupported Features
+## Differences from jade
+
+React Jade has a few bonus features, that are not part of Jade.
+
+### Automatic partial application of `on` functions
+
+In react, you add event listeners by setting attributes, e.g. `onClick`.  For example:
+
+```jade
+button(onClick=clicked) Click Me!
+```
+```js
+var fn = jade.compileFile('template.jade');
+React.renderComponent(fn({clicked: function () { alert('clicked'); }), container);
+```
+
+Often, you may want to partially apply a function, e.g.
+
+```jade
+input(value=view.text onChange=view.setProperty.bind(view, 'text'))
+```
+```js
+function View() {
+}
+View.prototype.setProperty = function (name, e) {
+  this[name] = e.target.value;
+  render();
+};
+var view = new View();
+function render() {
+  React.renderComponent(fn({view: view}), container);
+}
+```
+
+Because you so often want that `.bind` syntax, and it gets pretty long and cumbersome to write, react-jade lets you omit it:
+
+```jade
+input(value=view.text onChange=view.setProperty('text'))
+```
+
+This is then automatically re-written to do the `.bind` for you.
+
+### Style
+
+In keeping with React, the style attribute should be an object, not a string.  e.g.
+
+```jade
+div(style={background: 'blue'})
+```
+
+### Unsupported Features
 
 Although a lot of jade just works, there are still some features that have yet to be implemented. Here is a list of known missing features, in order of priority for adding them. Pull requests welcome:
 

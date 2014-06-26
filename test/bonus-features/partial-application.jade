@@ -1,0 +1,5 @@
+- var click = view.click.bind(view);
+
+button(onClick=click('Click Me 0!')) Click Me 0!
+button(onClick=view.click('Click Me 1!')) Click Me 1!
+button(onClick=view['click']('Click Me 2!')) Click Me 2!

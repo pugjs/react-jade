@@ -113,3 +113,32 @@ function joinStrings(elements) {
   }
   return result;
 }
+
+test('bonus-features/partial-application.jade', function () {
+  var fn = jade.compileFile(__dirname + '/bonus-features/partial-application.jade');
+  fs.writeFileSync(__dirname + '/output/partial-application.js', jade.compileFileClient(__dirname + '/bonus-features/partial-application.jade'));
+  function click() {
+    throw new Error('click should never actually get called');
+  }
+  var i = 0;
+  var view = { click: click };
+  click.bind = function (self, val) {
+    if (i === 0) {
+      assert(self === view);
+      assert(arguments.length === 1);
+    } else if (i === 1) {
+      assert(self === null);
+      assert(val === 'Click Me 0!');
+    } else if (i === 2) {
+      assert(self === view);
+      assert(val === 'Click Me 1!');
+    } else if (i === 3) {
+      assert(self === view);
+      assert(val === 'Click Me 2!');
+    }
+    i++;
+    return click;
+  };
+  fn({ view: view });
+  assert(i === 4);
+});
