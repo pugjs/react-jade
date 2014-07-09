@@ -10,7 +10,7 @@
     "envify": "~1.2.1",
     "react": "~0.10.0",
     "static-module": "0.0.7",
-    "constantinople": "~2.0.0",
+    "constantinople": "~2.0.1",
     "ent": "~2.0.0"
   },
   "devDependencies": {
