@@ -78,12 +78,16 @@ function parseFile(filename, options) {
     'jade_variables(locals);' +
     compiler.compile() +
     '}';
+    
+  // Check that the compiled JavaScript code is valid thus far.
+  // uglify-js throws very cryptic errors when it fails to parse code.  
   try {
     Function('', js);
   } catch (ex) {
     console.log(js);
     throw ex;
   }
+  
   var ast = uglify.parse(js, {filename: filename});
 
   ast.figure_out_scope();
