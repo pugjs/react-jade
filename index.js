@@ -125,9 +125,6 @@ function parseFile(filename, options) {
   assert(/^exports *= */.test(js));
   assert(/jade_variables\(locals\)/.test(js));
 
-  if (globals.length === 0) {
-    return js.replace(/^exports *= */, 'var result = ').replace(/\n? *jade_variables\(locals\);?/, '').replace(/;?$/, '();') + '\nreturn function () { return result; };';
-  }
   js = js.replace(/\n? *jade_variables\(locals\);?/, globals.map(function (g) {
     return '  var ' + g + ' = ' + JSON.stringify(g) + ' in locals ? locals.' + g + ' : jade_globals_' + g + ';';
   }).join('\n'));
