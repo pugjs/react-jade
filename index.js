@@ -78,16 +78,16 @@ function parseFile(filename, options) {
     'jade_variables(locals);' +
     compiler.compile() +
     '}';
-    
+
   // Check that the compiled JavaScript code is valid thus far.
-  // uglify-js throws very cryptic errors when it fails to parse code.  
+  // uglify-js throws very cryptic errors when it fails to parse code.
   try {
     Function('', js);
   } catch (ex) {
     console.log(js);
     throw ex;
   }
-  
+
   var ast = uglify.parse(js, {filename: filename});
 
   ast.figure_out_scope();
@@ -148,5 +148,5 @@ function compileFileClient(filename, options) {
   var react = options.outputFile ? path.relative(path.dirname(options.outputFile), reactRuntimePath) : reactRuntimePath;
   return '(function (React) {\n  ' +
     parseFile(filename, options).split('\n').join('\n  ') +
-    '\n}(typeof React !== "undefined" ? React : require("' + react.replace(/\\/g, '/') + '")))';
+    '\n}(typeof React !== "undefined" ? React : require("' + react.replace(/^([^\.])/, './$1').replace(/\\/g, '/') + '")))';
 }
