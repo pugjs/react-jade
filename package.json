@@ -16,7 +16,8 @@
     "testit": "~1.2.0",
     "rimraf": "~2.2.8",
     "marked": "~0.3.2",
-    "htmlparser2": "~3.7.1"
+    "htmlparser2": "~3.7.1",
+    "react": "~0.11.0"
   },
   "peerDependencies": {
     "react": "~0"
