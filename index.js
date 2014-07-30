@@ -74,6 +74,7 @@ function parseFile(filename, options) {
     'function jade_join_classes(val) {' +
     'return Array.isArray(val) ? val.map(jade_join_classes).filter(function (val) { return val != null && val !== ""; }).join(" ") : val;' +
     '};' +
+    'var jade_mixins = {};' +
     'var jade_interp;' +
     'jade_variables(locals);' +
     compiler.compile() +

@@ -22,7 +22,6 @@ try {
 fs.readdirSync(inputDir).filter(function (name) {
   return /\.jade$/.test(name) &&
     !/doctype/.test(name) &&
-    !/mixin/.test(name) &&
     !/filter/.test(name) &&
     !/case/.test(name) &&
     'xml.jade' !== name &&
@@ -43,6 +42,8 @@ fs.readdirSync(inputDir).filter(function (name) {
     'code.iteration.jade' !== name &&
     'code.escape.jade' !== name &&
     'blockquote.jade' !== name &&
+    'mixin.attrs.jade' !== name &&
+    'mixin.merge.jade' !== name &&
     'attrs.js.jade' !== name &&
     'attrs.jade' !== name &&
     'attrs.interpolation.jade' !== name &&
