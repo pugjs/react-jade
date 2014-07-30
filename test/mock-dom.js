@@ -11,7 +11,9 @@ function mock() {
     React.DOM[tags[i]] = mockFor(tags[i]);
   }
   function mockFor(name) {
-    return function (attribs, children) {
+    return function (attribs) {
+      var children = Array.prototype.slice.call(arguments, 1);
+      if (attribs) {
       if ('class' in attribs) throw new Error('Cannot have an attribute named "class", perhaps you meant "className"');
       if ('className' in attribs) {
         attribs['class'] = attribs.className;
@@ -27,6 +29,7 @@ function mock() {
           attribs[key] = attribs[key] + '';
         }
       });
+      }
       return {
         type: 'tag',
         name: name,
