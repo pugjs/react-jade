@@ -64,7 +64,9 @@ fs.readdirSync(inputDir).filter(function (name) {
       outputFile: outputDir + '/' + name + '.js',
       basedir: inputDir
     });
-    var actual = fn({title: 'Jade'}).children;
+    var actual = fn({title: 'Jade'});
+    var hasDiv = expected.filter(function(element) { return element.type !== 'text' }).length !== 1;
+    actual = hasDiv ? actual.children : actual; 
     mockDom.reset();
 
     if (domToString(expected) !== domToString(actual)) {
