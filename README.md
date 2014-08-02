@@ -18,7 +18,7 @@ If you are using browserify, just write a file that looks like the following, th
 
 ```js
 var React = require('react');
-var jade = require('jade-react');
+var jade = require('react-jade');
 
 var template = jade.compileFile(__dirname + '/template.jade');
 
@@ -58,7 +58,7 @@ You can also use react-jade to render templates on the server side via `React.re
 ```js
 var fs = require('fs');
 var React = require('react');
-var jade = require('jade-react');
+var jade = require('react-jade');
 
 var template = jade.compileFile(__dirname + '/template.jade');
 

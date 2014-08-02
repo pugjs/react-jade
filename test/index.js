@@ -22,7 +22,6 @@ try {
 fs.readdirSync(inputDir).filter(function (name) {
   return /\.jade$/.test(name) &&
     !/doctype/.test(name) &&
-    !/mixin/.test(name) &&
     !/filter/.test(name) &&
     !/case/.test(name) &&
     'xml.jade' !== name &&
@@ -43,6 +42,8 @@ fs.readdirSync(inputDir).filter(function (name) {
     'code.iteration.jade' !== name &&
     'code.escape.jade' !== name &&
     'blockquote.jade' !== name &&
+    'mixin.attrs.jade' !== name &&
+    'mixin.merge.jade' !== name &&
     'attrs.js.jade' !== name &&
     'attrs.jade' !== name &&
     'attrs.interpolation.jade' !== name &&
@@ -63,7 +64,9 @@ fs.readdirSync(inputDir).filter(function (name) {
       outputFile: outputDir + '/' + name + '.js',
       basedir: inputDir
     });
-    var actual = fn({title: 'Jade'}).children;
+    var actual = fn({title: 'Jade'});
+    var hasDiv = expected.filter(function(element) { return element.type !== 'text' }).length !== 1;
+    actual = hasDiv ? actual.children : actual; 
     mockDom.reset();
 
     if (domToString(expected) !== domToString(actual)) {
