@@ -70,7 +70,13 @@ function parseFile(filename, options) {
     jade.rethrow(err, parser.filename, parser.lexer.lineno, parser.input);
   }
   var compiler = new Compiler(tokens);
+
   var js = 'exports = function (locals) {' +
+    'function getReactClass(name, args) { ' +
+    'return (React.isValidClass(locals[name])) ' + 
+        '? locals[name].apply(locals[name], args) ' +
+        ': (React.DOM[name]) ? React.DOM[name].apply(React.DOM, args) : React.DOM.div.apply(React.DOM, args)' +
+    '};' +
     'function jade_join_classes(val) {' +
     'return Array.isArray(val) ? val.map(jade_join_classes).filter(function (val) { return val != null && val !== ""; }).join(" ") : val;' +
     '};' +
