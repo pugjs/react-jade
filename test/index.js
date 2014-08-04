@@ -157,9 +157,7 @@ test('bonus-features/react-component-tags.jade', function () {
     }
   });
   
-  var rendered = template({
-    name: "Jack"
-  , Person: Person});
+  var rendered = template({ name: "Jack" }, {Person: Person});
   
   assert(react.isValidComponent(rendered));
   
