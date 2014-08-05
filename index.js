@@ -56,10 +56,8 @@ function browserifySupport(options, extra) {
   }
 }
 
-function parseFile(filename, options) {
-  var str = fs.readFileSync(filename, 'utf8');
+function parse(str, options) {
   var options = options || {};
-  options.filename = path.resolve(filename);
   var parser = new Parser(str, options.filename, options);
   var tokens;
   try {
@@ -70,7 +68,13 @@ function parseFile(filename, options) {
     jade.rethrow(err, parser.filename, parser.lexer.lineno, parser.input);
   }
   var compiler = new Compiler(tokens);
-  var js = 'exports = function (locals) {' +
+
+  var js = 'exports = function (locals, components) {' +
+    'function getReactClass(name, args) { ' +
+    'return (components && React.isValidClass(components[name])) ' + 
+        '? components[name].apply(components[name], args) ' +
+        ': (React.DOM[name]) ? React.DOM[name].apply(React.DOM, args) : React.DOM.div.apply(React.DOM, args)' +
+    '};' +
     'function jade_join_classes(val) {' +
     'return Array.isArray(val) ? val.map(jade_join_classes).filter(function (val) { return val != null && val !== ""; }).join(" ") : val;' +
     '};' +
@@ -89,7 +93,7 @@ function parseFile(filename, options) {
     throw ex;
   }
 
-  var ast = uglify.parse(js, {filename: filename});
+  var ast = uglify.parse(js, {filename: options.filename});
 
   ast.figure_out_scope();
   ast = ast.transform(uglify.Compressor({
@@ -138,16 +142,36 @@ function parseFile(filename, options) {
   }).join('') + js.replace(/^exports *= */, 'return ');
 }
 
+function parseFile(filename, options) {
+  var str = fs.readFileSync(filename, 'utf8').toString();
+  var options = options || {};
+  options.filename = path.resolve(filename);
+  return parse(str, options);
+}
+
+exports.compile = function(str, options){
+  options = options || { filename: '' }
+  return Function('React', parse(str, options))(React);
+}
+
 exports.compileFile = compileFile;
 function compileFile(filename, options) {
   return Function('React', parseFile(filename, options))(React);
 }
 
-exports.compileFileClient = compileFileClient;
-function compileFileClient(filename, options) {
-  options = options || {};
+exports.compileClient = compileClient;
+function compileClient(str, options){
+  options = options || { filename: '' };
   var react = options.outputFile ? path.relative(path.dirname(options.outputFile), reactRuntimePath) : reactRuntimePath;
   return '(function (React) {\n  ' +
-    parseFile(filename, options).split('\n').join('\n  ') +
+    parse(str, options).split('\n').join('\n  ') +
     '\n}(typeof React !== "undefined" ? React : require("' + react.replace(/^([^\.])/, './$1').replace(/\\/g, '/') + '")))';
+}
+
+exports.compileFileClient = compileFileClient;
+function compileFileClient(filename, options) {
+  var str = fs.readFileSync(filename, 'utf8').toString();
+  var options = options || {};
+  options.filename = path.resolve(filename);
+  return compileClient(str, options);
 }

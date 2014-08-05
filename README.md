@@ -99,6 +99,14 @@ Compile a jade file into a function that takes locals and returns a React DOM no
 
 Compile a jade file into the source code for a function that takes locals and returns a React DOM node.  The result requires either a global 'React' variable, or the ability to require 'React' as a CommonJS module.
 
+### jade.compile(jadeString, options) => fn
+
+Same as `jade.compileFile` except you pass an inline jade string instead of a filename. You should set `options.filename` manually.
+
+### jade.compileClient(jadeString, options)
+
+Same as `jade.compileFileClient` except you pass an inline jade string instead of a filename. You should set `options.filename` manually.
+
 ## Differences from jade
 
 React Jade has a few bonus features, that are not part of Jade.
