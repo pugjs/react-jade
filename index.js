@@ -2,7 +2,6 @@
 
 var fs = require('fs');
 var path = require('path');
-var assert = require('assert');
 var Parser = require('jade/lib/parser.js');
 var jade = require('jade/lib/runtime.js');
 var React = require('react');
@@ -111,9 +110,6 @@ function parse(str, options) {
   }).filter(function (name) {
     return name !== 'jade_variables' && name !== 'exports' && name !== 'Array' && name !== 'React';
   });
-
-  assert(/^exports *= */.test(js));
-  assert(/jade_variables\(locals\)/.test(js));
 
   js = js.replace(/\n? *jade_variables\(locals\);?/, globals.map(function (g) {
     return '  var ' + g + ' = ' + JSON.stringify(g) + ' in locals ? locals.' + g + ' : jade_globals_' + g + ';';
