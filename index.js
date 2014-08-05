@@ -4,7 +4,7 @@ var fs = require('fs');
 var path = require('path');
 var assert = require('assert');
 var Parser = require('jade/lib/parser.js');
-var jade = require('jade/lib/runtime.js');
+var jade = require('./runtime.js');
 var React = require('react');
 var staticModule = require('static-module');
 var resolve = require('resolve');
@@ -79,14 +79,8 @@ function parse(str, options) {
   var compiler = new Compiler(tokens);
 
   var js = 'exports = function (locals, components) {' +
-    'function getReactClass(name, args) { ' +
-    'return (components && React.isValidClass(components[name])) ' +
-        '? components[name].apply(components[name], args) ' +
-        ': (React.DOM[name]) ? React.DOM[name].apply(React.DOM, args) : React.DOM.div.apply(React.DOM, args)' +
-    '};' +
-    'function jade_join_classes(val) {' +
-    'return Array.isArray(val) ? val.map(jade_join_classes).filter(function (val) { return val != null && val !== ""; }).join(" ") : val;' +
-    '};' +
+    'var React = runtime.React;' +
+    'function toReact(name, args) { return runtime.toReact(components, name, args); }; ' +
     'var jade_mixins = {};' +
     'var jade_interp;' +
     'jade_variables(locals);' +
@@ -132,7 +126,7 @@ function parse(str, options) {
   var globals = ast.globals.map(function (node, name) {
     return name;
   }).filter(function (name) {
-    return name !== 'jade_variables' && name !== 'exports' && name !== 'Array' && name !== 'React';
+    return name !== 'jade_variables' && name !== 'exports' && name !== 'Array' && name !== 'runtime';
   });
 
   js = ast.print_to_string({
@@ -159,13 +153,13 @@ function parseFile(filename, options) {
 }
 
 exports.compile = function(str, options){
-  options = options || { filename: '' }
-  return Function('React', parse(str, options))(React);
+  options = options || { filename: '' };
+  return Function('runtime', parse(str, options))(jade);
 }
 
 exports.compileFile = compileFile;
 function compileFile(filename, options) {
-  return Function('React', parseFile(filename, options))(React);
+  return Function('runtime', parseFile(filename, options))(jade);
 }
 
 exports.compileClient = compileClient;
