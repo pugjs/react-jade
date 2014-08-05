@@ -110,10 +110,17 @@ function parse(str, options) {
   }).filter(function (name) {
     return name !== 'jade_variables' && name !== 'exports' && name !== 'Array' && name !== 'React';
   });
+  
+  js = ast.print_to_string({
+    beautify: true,
+    comments: true,
+    indent_level: 2
+  });
 
-  js = js.replace(/\n? *jade_variables\(locals\);?/, globals.map(function (g) {
+  js = js.replace(/\n? *jade_variables\(locals\);?/, '\n' + globals.map(function (g) {
     return '  var ' + g + ' = ' + JSON.stringify(g) + ' in locals ? locals.' + g + ' : jade_globals_' + g + ';';
   }).join('\n'));
+  
   return globals.map(function (g) {
     return 'var jade_globals_' + g + ' = typeof ' + g + ' === "undefined" ? undefined : ' + g + ';\n';
   }).join('') + js.replace(/^exports *= */, 'return ');
