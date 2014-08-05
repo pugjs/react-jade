@@ -26,7 +26,16 @@ function browserifySupport(options, extra) {
       });
     };
     return staticModule({
-    'react-jade': {
+      'react-jade': {
+        compile: function (jadeSrc, localOptions) {
+          localOptions = localOptions || {};
+          for (var key in options) {
+            if ((key in options) && !(key in localOptions))
+            localOptions[key] = options[key];
+          }
+          localOptions.outputFile = filename;
+          return compileClient(jadeSrc, localOptions);
+        },
         compileFile: function (jadeFile, localOptions) {
           localOptions = localOptions || {};
           for (var key in options) {
@@ -71,7 +80,7 @@ function parse(str, options) {
 
   var js = 'exports = function (locals, components) {' +
     'function getReactClass(name, args) { ' +
-    'return (components && React.isValidClass(components[name])) ' + 
+    'return (components && React.isValidClass(components[name])) ' +
         '? components[name].apply(components[name], args) ' +
         ': (React.DOM[name]) ? React.DOM[name].apply(React.DOM, args) : React.DOM.div.apply(React.DOM, args)' +
     '};' +
