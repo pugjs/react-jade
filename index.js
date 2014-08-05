@@ -10,7 +10,6 @@ var staticModule = require('static-module');
 var resolve = require('resolve');
 var uglify = require('uglify-js');
 var Compiler = require('./lib/compiler.js');
-var JavaScriptCompressor = require('./lib/java-script-compressor.js');
 
 var reactRuntimePath = require.resolve('react');
 
@@ -105,28 +104,6 @@ function parse(str, options) {
   var ast = uglify.parse(js, {filename: options.filename});
 
   ast.figure_out_scope();
-  ast = ast.transform(uglify.Compressor({
-    sequences: false,   // join consecutive statemets with the “comma operator"
-    properties: true,   // optimize property access: a["foo"] → a.foo
-    dead_code: true,    // discard unreachable code
-    unsafe: true,       // some unsafe optimizations (see below)
-    conditionals: true, // optimize if-s and conditional expressions
-    comparisons: true,  // optimize comparisonsx
-    evaluate: true,     // evaluate constant expressions
-    booleans: true,     // optimize boolean expressions
-    loops: true,        // optimize loops
-    unused: true,       // drop unused variables/functions
-    hoist_funs: true,   // hoist function declarations
-    hoist_vars: false,  // hoist variable declarations
-    if_return: true,    // optimize if-s followed by return/continue
-    join_vars: false,   // join var declarations
-    cascade: true,      // try to cascade `right` into `left` in sequences
-    side_effects: true, // drop side-effect-free statements
-    warnings: false,     // warn about potentially dangerous optimizations/code
-    global_defs: {}     // global definitions));
-  }));
-
-  ast = ast.transform(new JavaScriptCompressor());
 
   ast.figure_out_scope();
   var globals = ast.globals.map(function (node, name) {
@@ -135,11 +112,6 @@ function parse(str, options) {
     return name !== 'jade_variables' && name !== 'exports' && name !== 'Array' && name !== 'React';
   });
 
-  js = ast.print_to_string({
-    beautify: true,
-    comments: true,
-    indent_level: 2
-  });
   assert(/^exports *= */.test(js));
   assert(/jade_variables\(locals\)/.test(js));
 
@@ -173,7 +145,7 @@ function compileClient(str, options){
   options = options || { filename: '' };
   var react = options.outputFile ? path.relative(path.dirname(options.outputFile), reactRuntimePath) : reactRuntimePath;
   return '(function (React) {\n  ' +
-    parse(str, options).split('\n').join('\n  ') +
+    parse(str, options) +
     '\n}(typeof React !== "undefined" ? React : require("' + react.replace(/^([^\.])/, './$1').replace(/\\/g, '/') + '")))';
 }
 
