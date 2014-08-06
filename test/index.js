@@ -7,6 +7,7 @@ var rimraf = require('rimraf').sync;
 var htmlparser = require('htmlparser2');
 var mockDom = require('./mock-dom.js');
 var jade = require('../');
+var react = require('react');
 
 var outputDir = __dirname + '/output';
 var inputDir = __dirname + '/jade/test/cases';
@@ -144,4 +145,30 @@ test('bonus-features/partial-application.jade', function () {
   };
   fn({ view: view });
   assert(i === 4);
+});
+
+
+test('bonus-features/react-component-tags.jade', function () {
+  var template = jade.compileFile(__dirname + '/bonus-features/react-component-tags.jade');
+
+  var Person = react.createClass({
+    render: function(){
+      return react.DOM.div({className: 'person'}, this.props.name);
+    }
+  });
+  
+  var components = {Person: Person};
+  
+  var rendered = template({ name: "Jack" }, function(name, args){
+    if(name in components) return components[name].apply(null, args);
+    else return react.DOM.div.apply(react.DOM, args);
+  });
+  
+  assert(react.isValidComponent(rendered));
+  
+  var str = react.renderComponentToStaticMarkup(rendered);
+
+  assert(str.match(/<div data-transform="div">/));
+  assert(str.match(/<div class="person">Jack<\/div>/));
+  
 });

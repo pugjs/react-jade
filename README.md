@@ -51,6 +51,41 @@ Then on your html page:
 </script>
 ```
 
+### React Components with Jade
+
+It is important to remember that `react-jade` returns a reference to a React instance and not a string. Tags inside jade must exist within the React namespace, if a tag doesn't exist it will error (See [list of implemented tags](http://facebook.github.io/react/docs/tags-and-attributes.html)).
+
+You can define your own "tags" inside your jade by passing a second argument to your template function, `resolver`.
+
+#### Example
+
+```jade
+invalid_react_dom_element
+  h1 Hello
+  Person(name=name)
+```
+
+```js
+var react = require('react');
+var components = {};
+
+function resolver (name, args) {
+  if(name in components) return components[name].apply(null, args);
+  else return react.DOM.div.apply(react.DOM, args);
+}
+
+components.Person = react.createClass({
+  render: function(){
+    return react.DOM.div({className: 'person'}, this.props.name);
+  }
+});
+
+template({name: "test"}, resolver);
+```
+
+In the above example the "invalid_react_dom_element" will automatically be converted to a `React.DOM.div` component. The "Person" tag will be converted to the React `Person` class and initialized with `this.props.name="test"`.
+
+
 ### Server Side
 
 You can also use react-jade to render templates on the server side via `React.renderComponentToString`.  This is especially useful for building isomorphic applications (i.e. applications that run the same on the server side and client side).
@@ -166,7 +201,7 @@ Although a lot of jade just works, there are still some features that have yet t
  - case/when
  - using each to iterate over keys of an object (rather than over items in an array)
  - interpolation
- - attribute interpollation
+ - attribute interpolation
  - special handling of data-attributes
  - outputting unescaped html results in an extra wrapper div and doesn't work for attributes
 
