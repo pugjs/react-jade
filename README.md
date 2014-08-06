@@ -53,9 +53,9 @@ Then on your html page:
 
 ### React Components with Jade
 
-It is important to remember that `react-jade` returns a reference to a React instance and not a string. Tags inside jade must exist within the React namespace, if a tag doesn't exist it will default to `React.DOM.div` (See [list of implemented tags](http://facebook.github.io/react/docs/tags-and-attributes.html)).
+It is important to remember that `react-jade` returns a reference to a React instance and not a string. Tags inside jade must exist within the React namespace, if a tag doesn't exist it will error (See [list of implemented tags](http://facebook.github.io/react/docs/tags-and-attributes.html)).
 
-You can define your own "tags" inside your jade by passing a second argument to your template function, `components`.
+You can define your own "tags" inside your jade by passing a second argument to your template function, `resolver`.
 
 #### Example
 
@@ -66,13 +66,21 @@ invalid_react_dom_element
 ```
 
 ```js
-var Person = react.createClass({
+var react = require('react');
+var components = {};
+
+function resolver (name, args) {
+  if(name in components) return components[name].apply(null, args);
+  else return react.DOM.div.apply(react.DOM, args);
+}
+
+components.Person = react.createClass({
   render: function(){
     return react.DOM.div({className: 'person'}, this.props.name);
   }
 });
 
-template({name: "test"}, {Person: Person});
+template({name: "test"}, resolver);
 ```
 
 In the above example the "invalid_react_dom_element" will automatically be converted to a `React.DOM.div` component. The "Person" tag will be converted to the React `Person` class and initialized with `this.props.name="test"`.
