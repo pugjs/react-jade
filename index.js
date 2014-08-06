@@ -78,12 +78,7 @@ function parse(str, options) {
   }
   var compiler = new Compiler(tokens);
 
-  var js = 'exports = function (locals, components) {' +
-    'function getReactClass(name, args) { ' +
-    'return (components && React.isValidClass(components[name])) ' +
-        '? components[name].apply(components[name], args) ' +
-        ': (React.DOM[name]) ? React.DOM[name].apply(React.DOM, args) : React.DOM.div.apply(React.DOM, args)' +
-    '};' +
+  var js = 'exports = function (locals, resolver) {' +
     'function jade_join_classes(val) {' +
     'return Array.isArray(val) ? val.map(jade_join_classes).filter(function (val) { return val != null && val !== ""; }).join(" ") : val;' +
     '};' +
