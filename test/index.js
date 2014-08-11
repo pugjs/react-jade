@@ -68,7 +68,7 @@ fs.readdirSync(inputDir).filter(function (name) {
     });
     var actual = fn({title: 'Jade'});
     var hasDiv = expected.filter(function(element) { return element.type !== 'text' }).length !== 1;
-    actual = hasDiv ? actual.children : actual; 
+    actual = hasDiv ? actual.children : actual;
     mockDom.reset();
 
     if (domToString(expected) !== domToString(actual)) {
@@ -166,4 +166,32 @@ fs.readdirSync(bonusDir).filter(function (name) {
       assert(domToString(expected) === domToString(actual), 'Expected output dom to match expected dom (see /test/output/' + name + '.actual.dom and /test/output/' + name + '.expected.dom for details.');
     }
   });
+});
+
+test('bonus-features/component-composition.jade', function () {
+
+  var name = 'component-composition';
+
+  var render1 = jade.compileFile(bonusDir + '/' + 'component-subcomponent' + '.jade');
+  var SubComponent= React.createClass({ render: render1 });
+
+  var render2 = jade.compileFile(bonusDir + '/' + name + '.jade');
+  var c = React.createClass({
+    render: function () {
+      return render2.call(this, {SubComponent: SubComponent});
+    }
+  });
+
+  var html = React.renderComponentToStaticMarkup(c({ title: 'Jade', items: [ 'a', 'b', 'c' ]}));
+
+  var actual = htmlparser.parseDOM(html);
+  var expected = htmlparser.parseDOM(fs.readFileSync(bonusDir + '/' + name + '.html', 'utf8'));
+  if (domToString(expected) !== domToString(actual)) {
+     fs.writeFileSync(outputDir + '/' + name + '.expected.dom', domToString(expected) + '\n');
+     fs.writeFileSync(outputDir + '/' + name + '.actual.dom', domToString(actual) + '\n');
+     assert(domToString(expected) === domToString(actual), 'Expected output dom to match expected dom (see /test/output/' + name + '.actual.dom and /test/output/' + name + '.expected.dom for details.');
+  }
+
+
+
 });
