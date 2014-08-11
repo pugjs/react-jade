@@ -1,0 +1,11 @@
+mixin show1(message)
+  span= 'param:' + message
+
+mixin show2()
+  span= 'props:'+ this.props.title
+
+div
+ +show1(this.props.title)
+ +show2()
+
+

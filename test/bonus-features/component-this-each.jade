@@ -1,0 +1,3 @@
+ul
+  each item, index in this.props.list
+    li(key=item, class=this.props.title + index%2)= this.props.title + ':' + item
