@@ -172,9 +172,16 @@ exports.compileClient = compileClient;
 function compileClient(str, options){
   options = options || { filename: '' };
   var react = options.outputFile ? path.relative(path.dirname(options.outputFile), reactRuntimePath) : reactRuntimePath;
-  return '(function (React) {\n  ' +
-    parse(str, options).split('\n').join('\n  ') +
-    '\n}(typeof React !== "undefined" ? React : require("' + react.replace(/^([^\.])/, './$1').replace(/\\/g, '/') + '")))';
+  
+  if (options.require === false) {
+    return '(function (React) {\n  ' +
+      parse(str, options).split('\n').join('\n  ') +
+      '\n}(React))';
+  } else {
+    return '(function (React) {\n  ' +
+      parse(str, options).split('\n').join('\n  ') +
+      '\n}(typeof React !== "undefined" ? React : require("' + react.replace(/^([^\.])/, './$1').replace(/\\/g, '/') + '")))';
+  }
 }
 
 exports.compileFileClient = compileFileClient;
