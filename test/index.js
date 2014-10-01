@@ -7,9 +7,11 @@ var rimraf = require('rimraf').sync;
 var htmlparser = require('htmlparser2');
 var mockDom = require('./mock-dom.js');
 var jade = require('../');
+var React = require('react');
 
 var outputDir = __dirname + '/output';
 var inputDir = __dirname + '/jade/test/cases';
+var bonusDir = __dirname + '/bonus-features';
 
 rimraf(outputDir);
 fs.mkdirSync(outputDir);
@@ -144,4 +146,24 @@ test('bonus-features/partial-application.jade', function () {
   };
   fn({ view: view });
   assert(i === 4);
+});
+
+fs.readdirSync(bonusDir).filter(function (name) {
+  return  /\.jade$/.test(name) &&
+          /component-this/.test(name)
+}).forEach(function(name) {
+  name = name.replace(/\.jade$/, '');
+  test(name, function () {
+    var fn = jade.compileFile(bonusDir + '/' + name + '.jade');
+    var c = React.createClass({ render: fn });
+    var html = React.renderComponentToStaticMarkup(c({ title: 'Jade', list: ['a', 'b', 'c']}));
+
+    var actual = htmlparser.parseDOM(html);
+    var expected = htmlparser.parseDOM(fs.readFileSync(bonusDir + '/' + name + '.html', 'utf8'));
+    if (domToString(expected) !== domToString(actual)) {
+      fs.writeFileSync(outputDir + '/' + name + '.expected.dom', domToString(expected) + '\n');
+      fs.writeFileSync(outputDir + '/' + name + '.actual.dom', domToString(actual) + '\n');
+      assert(domToString(expected) === domToString(actual), 'Expected output dom to match expected dom (see /test/output/' + name + '.actual.dom and /test/output/' + name + '.expected.dom for details.');
+    }
+  });
 });
