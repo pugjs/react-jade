@@ -154,6 +154,11 @@ function parseFile(filename, options) {
 
 exports.compile = function(str, options){
   options = options || { filename: '' }
+  if (str && typeof str === 'object' &&
+      str.raw && typeof str.raw === 'object' &&
+      str.raw.length === 1 && typeof str.raw[0] === 'string') {
+    str = str.raw[0];
+  }
   return Function('React', parse(str, options))(React);
 }
 
