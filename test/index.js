@@ -167,3 +167,28 @@ fs.readdirSync(bonusDir).filter(function (name) {
     }
   });
 });
+
+test('bonus-features/component-composition.jade', function () {
+
+  var name = 'component-composition';
+  var components = {};
+
+  var render1 = jade.compileFileRender(bonusDir + '/' + 'component-subcomponent' + '.jade');
+  components.SubComponent= React.createClass({ render: render1 });
+
+  var render2 = jade.compileFileRender(bonusDir + '/' + name + '.jade', { components: components });
+  var c = React.createClass({ render: render2 });
+  
+  var html = React.renderComponentToStaticMarkup(c({ title: 'Jade', items: [ 'a', 'b', 'c' ]}));
+
+  var actual = htmlparser.parseDOM(html);
+  var expected = htmlparser.parseDOM(fs.readFileSync(bonusDir + '/' + name + '.html', 'utf8'));
+  if (domToString(expected) !== domToString(actual)) {
+     fs.writeFileSync(outputDir + '/' + name + '.expected.dom', domToString(expected) + '\n');
+     fs.writeFileSync(outputDir + '/' + name + '.actual.dom', domToString(actual) + '\n');
+     assert(domToString(expected) === domToString(actual), 'Expected output dom to match expected dom (see /test/output/' + name + '.actual.dom and /test/output/' + name + '.expected.dom for details.');
+  }
+
+
+
+});

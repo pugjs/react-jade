@@ -1,0 +1,5 @@
+div
+  h1= this.props.title
+  ul
+    each item, index in this.props.items
+      SubComponent(key="item"+index, item=item)

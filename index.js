@@ -78,12 +78,7 @@ function parse(str, options) {
   }
   var compiler = new Compiler(tokens);
 
-  var js = 'exports = function (locals, components) {' +
-    'function getReactClass(name, args) { ' +
-    'return (components && React.isValidClass(components[name])) ' +
-        '? components[name].apply(components[name], args) ' +
-        ': (React.DOM[name]) ? React.DOM[name].apply(React.DOM, args) : React.DOM.div.apply(React.DOM, args)' +
-    '};' +
+  var js = 'exports = function (locals) {' +
     'function jade_join_classes(val) {' +
     'return Array.isArray(val) ? val.map(jade_join_classes).filter(function (val) { return val != null && val !== ""; }).join(" ") : val;' +
     '};' +
@@ -163,9 +158,23 @@ exports.compile = function(str, options){
   return Function('React', parse(str, options))(React);
 }
 
+exports.compileRender = function(str, options){
+  options = options || {};
+  options.filename = options.filename || '';
+  options.components = options.components || {};
+  return Function('React, components', 'return function() { ' + parse(str, options).replace(/;$/, '.call(this, components);') + '};')(React, options.components);
+}
+
 exports.compileFile = compileFile;
 function compileFile(filename, options) {
   return Function('React', parseFile(filename, options))(React);
+}
+
+exports.compileFileRender = compileFileRender;
+function compileFileRender(filename, options) {
+  options = options || {};
+  options.components = options.components || {};
+  return Function('React, components', 'return function() { ' + parseFile(filename, options).replace(/;$/, '.call(this, components);') + '};')(React, options.components);
 }
 
 exports.compileClient = compileClient;
