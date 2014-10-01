@@ -175,11 +175,9 @@ test('bonus-features/component-composition.jade', function () {
   var render1 = jade.compileFile(bonusDir + '/' + 'component-subcomponent' + '.jade');
   var SubComponent= React.createClass({ render: render1 });
 
-  var render2 = jade.compileFile(bonusDir + '/' + name + '.jade');
+  var render2 = jade.compileFile(bonusDir + '/' + name + '.jade').locals({SubComponent: SubComponent});
   var c = React.createClass({
-    render: function () {
-      return render2.call(this, {SubComponent: SubComponent});
-    }
+    render: render2
   });
 
   var html = React.renderComponentToStaticMarkup(c({ title: 'Jade', items: [ 'a', 'b', 'c' ]}));

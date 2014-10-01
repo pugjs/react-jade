@@ -78,7 +78,7 @@ function parse(str, options) {
   }
   var compiler = new Compiler(tokens);
 
-  var js = 'exports = function (locals) {' +
+  var js = 'var fn = function (locals) {' +
     'function jade_join_classes(val) {' +
     'return Array.isArray(val) ? val.map(jade_join_classes).filter(function (val) { return val != null && val !== ""; }).join(" ") : val;' +
     '};' +
@@ -135,7 +135,6 @@ function parse(str, options) {
     comments: true,
     indent_level: 2
   });
-  assert(/^exports *= */.test(js));
   assert(/jade_variables\(locals\)/.test(js));
 
   js = js.replace(/\n? *jade_variables\(locals\);?/, globals.map(function (g) {
@@ -143,7 +142,7 @@ function parse(str, options) {
   }).join('\n'));
   return globals.map(function (g) {
     return 'var jade_globals_' + g + ' = typeof ' + g + ' === "undefined" ? undefined : ' + g + ';\n';
-  }).join('') + js.replace(/^exports *= */, 'return ');
+  }).join('') + js + ';\nfn.locals = ' + setLocals.toString() + ';\nreturn fn;';
 }
 
 function parseFile(filename, options) {
@@ -185,4 +184,22 @@ function compileFileClient(filename, options) {
   var options = options || {};
   options.filename = path.resolve(filename);
   return compileClient(str, options);
+}
+
+function setLocals(locals) {
+  var render = this;
+  function newRender(additionalLocals) {
+    var newLocals = {};
+    for (var key in locals) {
+      newLocals[key] = locals[key];
+    }
+    if (additionalLocals) {
+      for (var key in additionalLocals) {
+        newLocals[key] = additionalLocals[key];
+      }
+    }
+    return render.call(this, newLocals);
+  }
+  newRender.locals = setLocals;
+  return newRender;
 }

@@ -107,6 +107,19 @@ Same as `jade.compileFile` except you pass an inline jade string instead of a fi
 
 Same as `jade.compileFileClient` except you pass an inline jade string instead of a filename. You should set `options.filename` manually.
 
+### template.locals(locals)
+
+You can set default `locals` values via the `template.locals` api.  e.g.
+
+```js
+var React = require('react');
+var jade = require('react-jade');
+
+var template = jade.compileFile(__dirname + '/template.jade').locals({title: 'React Jade'});
+
+React.renderComponent(template({local: 'values'}), document.getElementById('container'));
+```
+
 ## Differences from jade
 
 React Jade has a few bonus features, that are not part of Jade.
