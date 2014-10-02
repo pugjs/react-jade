@@ -25,7 +25,7 @@
     "react": "~0"
   },
   "scripts": {
-    "test": "node test/download-jade-tests.js && node test/index.js && istanbul cover test/index.js"
+    "test": "node test/download-jade-tests.js && node test/index.js"
   },
   "repository": {
     "type": "git",
