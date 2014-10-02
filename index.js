@@ -3,19 +3,30 @@
 var fs = require('fs');
 var path = require('path');
 var assert = require('assert');
+var Transform = require('stream').Transform;
 var Parser = require('jade/lib/parser.js');
 var jade = require('jade/lib/runtime.js');
 var React = require('react');
 var staticModule = require('static-module');
 var resolve = require('resolve');
 var uglify = require('uglify-js');
+var acornTransform = require('./lib/acorn-transform.js');
 var Compiler = require('./lib/compiler.js');
 var JavaScriptCompressor = require('./lib/java-script-compressor.js');
 
 var reactRuntimePath = require.resolve('react');
 
+function isTemplateLiteral(str) {
+  return str && typeof str === 'object' &&
+    str.raw && typeof str.raw === 'object' &&
+    str.raw.length === 1 && typeof str.raw[0] === 'string';
+}
+
 exports = (module.exports = browserifySupport);
 function browserifySupport(options, extra) {
+  if (isTemplateLiteral(options)) {
+    return compile(options.raw[0]);
+  }
   function transform(filename) {
     function clientRequire(path) {
       return require(clientRequire.resolve(path));
@@ -25,28 +36,63 @@ function browserifySupport(options, extra) {
         basedir: path.dirname(filename)
       });
     };
-    return staticModule({
-      'react-jade': {
-        compile: function (jadeSrc, localOptions) {
-          localOptions = localOptions || {};
-          for (var key in options) {
-            if ((key in options) && !(key in localOptions))
-            localOptions[key] = options[key];
-          }
-          localOptions.outputFile = filename;
-          return compileClient(jadeSrc, localOptions);
-        },
-        compileFile: function (jadeFile, localOptions) {
-          localOptions = localOptions || {};
-          for (var key in options) {
-            if ((key in options) && !(key in localOptions))
-            localOptions[key] = options[key];
-          }
-          localOptions.outputFile = filename;
-          return compileFileClient(jadeFile, localOptions);
+    var src = '';
+    var stream = new Transform();
+    stream._transform = function (chunk, encoding, callback) {
+      src += chunk;
+      callback();
+    };
+    stream._flush = function (callback) {
+      src = acornTransform(src, {
+        TaggedTemplateExpression: function (node) {
+          var quasi = '(function () {' +
+              'var quasi = ' + acornTransform.stringify(node.quasi.quasis.map(function (q) {
+                return q.value.cooked;
+              })) + ';' +
+              'quasi.raw = ' + acornTransform.stringify(node.quasi.quasis.map(function (q) {
+                return q.value.raw;
+              })) + ';' +
+              'return quasi;}())';
+
+          var expressions = node.quasi.expressions.map(acornTransform.getSource);
+          acornTransform.setSource(node, acornTransform.getSource(node.tag) + '(' +
+                                   [quasi].concat(expressions).join(', ') + ')');
         }
+      });
+      makeStatic.on('data', this.push.bind(this));
+      makeStatic.on('error', callback);
+      makeStatic.on('end', callback.bind(null, null));
+      makeStatic.end(src);
+    };
+
+    function staticCompileImplementation(jadeSrc, localOptions) {
+      localOptions = localOptions || {};
+      for (var key in options) {
+        if ((key in options) && !(key in localOptions))
+        localOptions[key] = options[key];
       }
-    }, {
+      localOptions.outputFile = filename;
+      return compileClient(jadeSrc, localOptions);
+    }
+    function staticCompileFileImplementation(jadeFile, localOptions) {
+      localOptions = localOptions || {};
+      for (var key in options) {
+        if ((key in options) && !(key in localOptions))
+        localOptions[key] = options[key];
+      }
+      localOptions.outputFile = filename;
+      return compileFileClient(jadeFile, localOptions);
+    }
+    function staticImplementation(templateLiteral) {
+      if (isTemplateLiteral(templateLiteral)) {
+        return staticCompileImplementation(templateLiteral.raw[0]);
+      } else {
+        return 'throw new Error("Invalid client side argument to react-jade");';
+      }
+    }
+    staticImplementation.compile = staticCompileImplementation;
+    staticImplementation.compileFile = staticCompileFileImplementation;
+    var makeStatic = staticModule({ 'react-jade': staticImplementation }, {
       vars: {
         __dirname: path.dirname(filename),
         __filename: path.resolve(filename),
@@ -54,6 +100,8 @@ function browserifySupport(options, extra) {
         require: clientRequire
       }
     });
+
+    return stream;
   }
   if (typeof options === 'string') {
     var file = options;
@@ -152,13 +200,9 @@ function parseFile(filename, options) {
   return parse(str, options);
 }
 
-exports.compile = function(str, options){
-  options = options || { filename: '' }
-  if (str && typeof str === 'object' &&
-      str.raw && typeof str.raw === 'object' &&
-      str.raw.length === 1 && typeof str.raw[0] === 'string') {
-    str = str.raw[0];
-  }
+exports.compile = compile;
+function compile(str, options){
+  options = options || { filename: '' };
   return Function('React', parse(str, options))(React);
 }
 

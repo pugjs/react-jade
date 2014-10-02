@@ -189,7 +189,14 @@ test('bonus-features/component-composition.jade', function () {
      fs.writeFileSync(outputDir + '/' + name + '.actual.dom', domToString(actual) + '\n');
      assert(domToString(expected) === domToString(actual), 'Expected output dom to match expected dom (see /test/output/' + name + '.actual.dom and /test/output/' + name + '.expected.dom for details.');
   }
+});
 
-
-
+test('bonus-features/browserify', function (done) {
+  fs.createReadStream(require.resolve('./test-client.js'))
+    .pipe(jade(require.resolve('./test-client.js')))
+    .pipe(fs.createWriteStream(__dirname + '/output/test-client.js'))
+    .on('close', function () {
+      require('./output/test-client.js');
+      done();
+    });
 });

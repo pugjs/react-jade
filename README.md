@@ -66,6 +66,41 @@ var html = React.renderComponentToString(template({local: 'values'}));
 fs.writeFileSync(__dirname + '/template.html', html);
 ```
 
+### ES6
+
+If you are using ES6 server side, or the browserify transform client side (even without any other ES6 support), you can use Tagged Literals to embed your jade code directly within your JavaScript components:
+
+```js
+var TodoList = React.createClass({
+  render: jade`
+ul
+  each item in this.props.items
+`
+});
+var TodoApp = React.createClass({
+  getInitialState: function() {
+    return {items: [], text: ''};
+  },
+  onChange: function(e) {
+    this.setState({text: e.target.value});
+  },
+  handleSubmit: function(e) {
+    e.preventDefault();
+    var nextItems = this.state.items.concat([this.state.text]);
+    var nextText = '';
+    this.setState({items: nextItems, text: nextText});
+  },
+  render: jade`
+h3 TODO
+TodoList(items=this.state.items)
+form(onSubmit=this.handleSubmit)
+  input(onChange=this.onChange value=this.state.text)
+  button= 'Add #' + (this.state.items.length + 1)
+`.locals({TodoList: TodoList})
+});
+React.renderComponent(TodoApp(), mountNode);
+```
+
 ## API
 
 ```js
