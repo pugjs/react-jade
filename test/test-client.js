@@ -9,7 +9,7 @@ var test = /^\<div id\=\"container\".*\>Some Text\<\/div\>$/;
 var templateA = jade`
 #container Some Text
 `;
-assert(test.test(React.renderComponentToString(templateA())));
+assert(test.test(React.renderToString(templateA())));
 
 var templateB = jade.compile('#container Some Text');
-assert(test.test(React.renderComponentToString(templateB())));
+assert(test.test(React.renderToString(templateB())));
