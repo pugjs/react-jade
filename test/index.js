@@ -49,7 +49,9 @@ fs.readdirSync(inputDir).filter(function (name) {
     'attrs.js.jade' !== name &&
     'attrs.jade' !== name &&
     'attrs.interpolation.jade' !== name &&
-    'attrs-data.jade' !== name;
+    'attrs-data.jade' !== name &&
+    'blocks-in-blocks.jade' !== name &&
+    'blocks-in-if.jade' !== name;
 }).forEach(function (name) {
   name = name.replace(/\.jade$/, '');
   test(name, function () {
