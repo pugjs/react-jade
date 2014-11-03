@@ -2,8 +2,8 @@
 
 Compile Jade to React JavaScript
 
-[![Build Status](https://img.shields.io/travis/ForbesLindesay/react-jade/master.svg)](https://travis-ci.org/ForbesLindesay/react-jade)
-[![Dependency Status](https://img.shields.io/gemnasium/ForbesLindesay/react-jade.svg)](https://gemnasium.com/ForbesLindesay/react-jade)
+[![Build Status](https://img.shields.io/travis/jadejs/react-jade/master.svg)](https://travis-ci.org/jadejs/react-jade)
+[![Dependency Status](https://img.shields.io/gemnasium/jadejs/react-jade.svg)](https://gemnasium.com/jadejs/react-jade)
 [![NPM version](https://img.shields.io/npm/v/react-jade.svg)](https://www.npmjs.org/package/react-jade)
 
 ## Installation
