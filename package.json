@@ -17,7 +17,7 @@
     "htmlparser2": "~3.7.1",
     "istanbul": "^0.3.2",
     "marked": "~0.3.2",
-    "react": "~0.11.0",
+    "react": "~0.12.0",
     "rimraf": "~2.2.8",
     "testit": "~1.2.0"
   },

@@ -4,11 +4,17 @@ var React = require('react');
 
 var tags = Object.keys(React.DOM);
 var originalValues = tags.map(function (tag) { return React.DOM[tag]; });
+var originalCreateElement = React.createElement;
 
 exports.mock = mock;
 function mock() {
   for (var i = 0; i < tags.length; i++) {
     React.DOM[tags[i]] = mockFor(tags[i]);
+  }
+  React.createElement = function() {
+    var args = Array.prototype.slice.call(arguments, 0);
+    var tag = args.shift();
+    return mockFor(tag).apply(null, args);
   }
   function mockFor(name) {
     return function (attribs) {
@@ -45,4 +51,5 @@ function reset() {
   for (var i = 0; i < tags.length; i++) {
     React.DOM[tags[i]] = originalValues[i];
   }
+  React.createElement = originalCreateElement;
 }

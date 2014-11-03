@@ -156,7 +156,7 @@ fs.readdirSync(bonusDir).filter(function (name) {
   test(name, function () {
     var fn = jade.compileFile(bonusDir + '/' + name + '.jade');
     var c = React.createClass({ render: fn });
-    var html = React.renderComponentToStaticMarkup(c({ title: 'Jade', list: ['a', 'b', 'c']}));
+    var html = React.renderToStaticMarkup(React.createElement(c, { title: 'Jade', list: ['a', 'b', 'c']}));
 
     var actual = htmlparser.parseDOM(html);
     var expected = htmlparser.parseDOM(fs.readFileSync(bonusDir + '/' + name + '.html', 'utf8'));
@@ -180,7 +180,7 @@ test('bonus-features/component-composition.jade', function () {
     render: render2
   });
 
-  var html = React.renderComponentToStaticMarkup(c({ title: 'Jade', items: [ 'a', 'b', 'c' ]}));
+  var html = React.renderToStaticMarkup(React.createElement(c, { title: 'Jade', items: [ 'a', 'b', 'c' ]}));
 
   var actual = htmlparser.parseDOM(html);
   var expected = htmlparser.parseDOM(fs.readFileSync(bonusDir + '/' + name + '.html', 'utf8'));

@@ -22,7 +22,7 @@ var jade = require('react-jade');
 
 var template = jade.compileFile(__dirname + '/template.jade');
 
-React.renderComponent(template({local: 'values'}), document.getElementById('container'));
+React.render(template({local: 'values'}), document.getElementById('container'));
 ```
 
 ```
@@ -47,13 +47,13 @@ Then on your html page:
 <script src="http://fb.me/react-0.10.0.js"></script>
 <script src="template.js"></script>
 <script>
-  React.renderComponent(template({local: 'values'}), document.getElementById('container'));
+  React.render(template({local: 'values'}), document.getElementById('container'));
 </script>
 ```
 
 ### Server Side
 
-You can also use react-jade to render templates on the server side via `React.renderComponentToString`.  This is especially useful for building isomorphic applications (i.e. applications that run the same on the server side and client side).
+You can also use react-jade to render templates on the server side via `React.renderToString`.  This is especially useful for building isomorphic applications (i.e. applications that run the same on the server side and client side).
 
 ```js
 var fs = require('fs');
@@ -62,7 +62,7 @@ var jade = require('react-jade');
 
 var template = jade.compileFile(__dirname + '/template.jade');
 
-var html = React.renderComponentToString(template({local: 'values'}));
+var html = React.renderToString(template({local: 'values'}));
 fs.writeFileSync(__dirname + '/template.html', html);
 ```
 
@@ -98,7 +98,7 @@ form(onSubmit=this.handleSubmit)
   button= 'Add #' + (this.state.items.length + 1)
 `.locals({TodoList: TodoList})
 });
-React.renderComponent(TodoApp(), mountNode);
+React.render(TodoApp(), mountNode);
 ```
 
 ## API
@@ -152,7 +152,7 @@ var jade = require('react-jade');
 
 var template = jade.compileFile(__dirname + '/template.jade').locals({title: 'React Jade'});
 
-React.renderComponent(template({local: 'values'}), document.getElementById('container'));
+React.render(template({local: 'values'}), document.getElementById('container'));
 ```
 
 ## Differences from jade
@@ -168,7 +168,7 @@ button(onClick=clicked) Click Me!
 ```
 ```js
 var fn = jade.compileFile('template.jade');
-React.renderComponent(fn({clicked: function () { alert('clicked'); }), container);
+React.render(fn({clicked: function () { alert('clicked'); }), container);
 ```
 
 Often, you may want to partially apply a function, e.g.
