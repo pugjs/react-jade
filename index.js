@@ -128,7 +128,9 @@ function parse(str, options) {
 
   var js = 'var fn = function (locals) {' +
     'function jade_join_classes(val) {' +
-    'return Array.isArray(val) ? val.map(jade_join_classes).filter(function (val) { return val != null && val !== ""; }).join(" ") : val;' +
+    'return (Array.isArray(val) ? val.map(jade_join_classes) : ' +
+      '(val && typeof val === "object") ? Object.keys(val).filter(function (key) { return val[key]; }) :' +
+      '[val]).filter(function (val) { return val != null && val !== ""; }).join(" ");' +
     '};' +
     'var jade_mixins = {};' +
     'var jade_interp;' +
@@ -175,7 +177,8 @@ function parse(str, options) {
   var globals = ast.globals.map(function (node, name) {
     return name;
   }).filter(function (name) {
-    return name !== 'jade_variables' && name !== 'exports' && name !== 'Array' && name !== 'React';
+    return name !== 'jade_variables' && name !== 'exports' && name !== 'Array' && name !== 'Object'
+      && name !== 'React';
   });
 
   js = ast.print_to_string({
