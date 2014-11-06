@@ -202,3 +202,13 @@ test('bonus-features/browserify', function (done) {
       done();
     });
 });
+test('bonus-features/browserify after es6ify', function (done) {
+  fs.createReadStream(require.resolve('./test-client.js'))
+    .pipe(require('es6ify')(require.resolve('./test-client.js')))
+    .pipe(jade(require.resolve('./test-client.js')))
+    .pipe(fs.createWriteStream(__dirname + '/output/test-client-es6ify.js'))
+    .on('close', function () {
+      require('./output/test-client-es6ify.js');
+      done();
+    });
+});
