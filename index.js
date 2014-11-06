@@ -132,6 +132,13 @@ function parse(str, options) {
       '(val && typeof val === "object") ? Object.keys(val).filter(function (key) { return val[key]; }) :' +
       '[val]).filter(function (val) { return val != null && val !== ""; }).join(" ");' +
     '};' +
+    'function jade_fix_style(style) {' +
+    'return typeof style === "string" ? style.split(";").filter(function (str) {' +
+      'return str.split(":").length > 1;' +
+    '}).reduce(function (obj, style) {' +
+      'obj[style.split(":")[0]] = style.split(":").slice(1).join(":"); return obj;' +
+    '}, {}) : style;' +
+    '}' +
     'var jade_mixins = {};' +
     'var jade_interp;' +
     'jade_variables(locals);' +
