@@ -212,3 +212,13 @@ test('bonus-features/browserify after es6ify', function (done) {
       done();
     });
 });
+
+
+test('bonus-features/browserify - error reporting', function (done) {
+  fs.createReadStream(require.resolve('./test-client-syntax-error.js'))
+    .pipe(jade(require.resolve('./test-client.js')))
+    .on('error', function (err) {
+      assert(/var templateA \= jade\`/.test(err.message));
+      return done();
+    }).resume();
+});
