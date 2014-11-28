@@ -26,7 +26,8 @@
     "react": "~0.12.0"
   },
   "scripts": {
-    "test": "node test/download-jade-tests.js && node test/index.js"
+    "test": "node test/download-jade-tests.js && node test/index.js && npm run coverage",
+    "coverage": "istanbul cover test"
   },
   "repository": {
     "type": "git",
