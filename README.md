@@ -205,6 +205,22 @@ In keeping with React, the style attribute should be an object, not a string.  e
 div(style={background: 'blue'})
 ```
 
+### valueLink
+
+The `valueLink` property supports two way binding to `this.state.name` by default.  e.g.
+
+```jade
+input(valueLink=this.state.name)
+```
+
+is eqivalent to:
+
+```jade
+input(valueLink={value: this.state.name,requestChange:function(v){ this.setState({name:v})}.bind(this)})
+```
+
+This makes building simple forms where each input should use a property of the state very easy.
+
 ### Unsupported Features
 
 Although a lot of jade just works, there are still some features that have yet to be implemented. Here is a list of known missing features, in order of priority for adding them. Pull requests welcome:
