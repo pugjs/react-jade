@@ -44,7 +44,7 @@ Then on your html page:
 
 ```html
 <div id="container"></div>
-<script src="http://fb.me/react-0.10.0.js"></script>
+<script src="http://fb.me/react-0.12.2.js"></script>
 <script src="template.js"></script>
 <script>
   React.render(template({local: 'values'}), document.getElementById('container'));
