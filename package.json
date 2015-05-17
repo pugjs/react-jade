@@ -4,24 +4,26 @@
   "description": "Compile Jade to React JavaScript",
   "keywords": [],
   "dependencies": {
-    "acorn": "^0.9.0",
+    "acorn": "^1.1.0",
     "constantinople": "^3.0.1",
-    "ent": "^2.0.0",
-    "jade": "1.7.0",
-    "resolve": "^1.0.0",
-    "static-module": "^1.0.0",
-    "uglify-js": "^2.4.15",
-    "with": "^4.0.1"
+    "ent": "^2.2.0",
+    "jade": "1.9.2",
+    "js-stringify": "^1.0.1",
+    "resolve": "^1.1.6",
+    "static-module": "^1.1.2",
+    "uglify-js": "^2.4.21",
+    "with": "^5.0.0"
   },
   "devDependencies": {
-    "es6ify": "^1.5.1",
-    "gethub": "~1.0.2",
-    "htmlparser2": "~3.7.1",
-    "istanbul": "^0.3.2",
-    "marked": "~0.3.2",
-    "react": "~0.13.0",
-    "rimraf": "~2.2.8",
-    "testit": "~1.2.0"
+    "es6ify": "^1.6.0",
+    "gethub": "^2.0.1",
+    "htmlparser2": "^3.8.2",
+    "istanbul": "^0.3.14",
+    "marked": "^0.3.3",
+    "react": "^0.13.3",
+    "rimraf": "^2.3.3",
+    "testit": "^2.0.2",
+    "unescape-html": "^1.0.0"
   },
   "peerDependencies": {
     "react": ">=0.12.0 <0.14.0"
