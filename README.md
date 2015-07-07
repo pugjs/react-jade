@@ -110,7 +110,7 @@ var jade = require('react-jade');
 
 ### jade(options) / jade(file)
 
-Acts as a browseify transform to inline calls to `jade.compileFile`.  The source code looks something like:
+Acts as a browserify transform to inline calls to `jade.compileFile`.  The source code looks something like:
 
 ```js
 function browserify(options) {
