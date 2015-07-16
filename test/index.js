@@ -224,3 +224,13 @@ test('bonus-features/browserify - error reporting', function (done) {
       return done();
     }).resume();
 });
+
+test('bonus-features/browserify - pass through JSON', function (done) {
+  fs.createReadStream(require.resolve('../package.json'))
+    .pipe(jade(require.resolve('../package.json')))
+    .pipe(fs.createWriteStream(__dirname + '/output/test-client-pass-through.json'))
+    .on('close', function () {
+      require('./output/test-client-pass-through');
+      done();
+    });
+});
