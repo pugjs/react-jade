@@ -74,7 +74,7 @@ If you are using ES6 server side, or the browserify transform client side (even 
 var TodoList = React.createClass({
   render: jade`
 ul
-  - each item in this.props.items
+  each item in this.props.items
     li= item
 `
 });
