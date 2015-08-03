@@ -20,13 +20,11 @@
     "htmlparser2": "^3.8.2",
     "istanbul": "^0.3.14",
     "marked": "^0.3.3",
-    "react": "^0.13.3",
+    "react": "^0.14.0-beta2",
+    "react-dom": "^0.14.0-beta2",
     "rimraf": "^2.3.3",
     "testit": "^2.0.2",
     "unescape-html": "^1.0.0"
-  },
-  "peerDependencies": {
-    "react": ">=0.12.0 <0.14.0"
   },
   "scripts": {
     "test": "node test/download-jade-tests.js && node test/index.js && npm run coverage",
