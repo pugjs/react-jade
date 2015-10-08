@@ -27,7 +27,7 @@
     "unescape-html": "^1.0.0"
   },
   "peerDependencies": {
-    "react": ">=0.14.0 <0.15.0"
+    "react": ">=0.12.0 <0.15.0"
   },
   "scripts": {
     "test": "node test/download-jade-tests.js && node test/index.js && npm run coverage",
