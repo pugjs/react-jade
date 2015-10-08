@@ -9,6 +9,7 @@ var unescapeHtml = require('unescape-html');
 var mockDom = require('./mock-dom.js');
 var jade = require('../');
 var React = require('react');
+var ReactDOM = require('react-dom/server')
 
 var outputDir = __dirname + '/output';
 var inputDir = __dirname + '/jade/test/cases';
@@ -160,7 +161,7 @@ fs.readdirSync(bonusDir).filter(function (name) {
   test(name, function () {
     var fn = jade.compileFile(bonusDir + '/' + name + '.jade');
     var c = React.createClass({ render: fn });
-    var html = React.renderToStaticMarkup(React.createElement(c, { title: 'Jade', list: ['a', 'b', 'c']}));
+    var html = ReactDOM.renderToStaticMarkup(React.createElement(c, { title: 'Jade', list: ['a', 'b', 'c']}));
 
     var actual = htmlparser.parseDOM(html);
     var expected = htmlparser.parseDOM(fs.readFileSync(bonusDir + '/' + name + '.html', 'utf8'));
@@ -184,7 +185,7 @@ test('bonus-features/component-composition.jade', function () {
     render: render2
   });
 
-  var html = React.renderToStaticMarkup(React.createElement(c, { title: 'Jade', items: [ 'a', 'b', 'c' ]}));
+  var html = ReactDOM.renderToStaticMarkup(React.createElement(c, { title: 'Jade', items: [ 'a', 'b', 'c' ]}));
 
   var actual = htmlparser.parseDOM(html);
   var expected = htmlparser.parseDOM(fs.readFileSync(bonusDir + '/' + name + '.html', 'utf8'));
