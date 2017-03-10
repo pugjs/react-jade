@@ -214,7 +214,7 @@ The `valueLink` property supports two way binding to `this.state.name` by defaul
 input(valueLink=this.state.name)
 ```
 
-is eqivalent to:
+is equivalent to:
 
 ```jade
 input(valueLink={value: this.state.name,requestChange:function(v){ this.setState({name:v})}.bind(this)})
