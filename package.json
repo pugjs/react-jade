@@ -7,7 +7,7 @@
     "acorn": "^1.1.0",
     "constantinople": "^3.0.1",
     "ent": "^2.2.0",
-    "jade": "1.9.2",
+    "jade": "1.11.0",
     "js-stringify": "^1.0.1",
     "resolve": "^1.1.6",
     "static-module": "^1.1.2",
@@ -20,14 +20,14 @@
     "htmlparser2": "^3.8.2",
     "istanbul": "^0.3.14",
     "marked": "^0.3.3",
-    "react": "^0.14.0",
-    "react-dom": "^0.14.0",
+    "react": "^15.0.2",
+    "react-dom": "^15.0.2",
     "rimraf": "^2.3.3",
     "testit": "^2.0.2",
     "unescape-html": "^1.0.0"
   },
   "peerDependencies": {
-    "react": ">=0.12.0 <0.15.0"
+    "react": ">=0.12.0 <=15.0"
   },
   "scripts": {
     "test": "node test/download-jade-tests.js && node test/index.js && npm run coverage",
